@@ -1,7 +1,8 @@
 import { Button } from "frames.js/next";
 import { frames } from "@/app/frames/frames";
 import { basePublicClient, zoraPublicClient } from "@/lib/transaction";
-import FrameStatus from "@/app/components/FrameStatus";
+import { appURL } from "@/lib/frames";
+import FrameNft from "@/app/components/FrameNft";
 
 const handler = frames(async (ctx) => {
   const transactionId =
@@ -9,6 +10,8 @@ const handler = frames(async (ctx) => {
 
   const searchParams = new URLSearchParams(ctx.url.searchParams);
   const chain = searchParams.get("chain") || "zora";
+  const imageUrl =
+    searchParams.get("imageUrl") || `${appURL()}/images/frame-landing.gif`;
   const txUrl =
     chain === "base"
       ? `https://basescan.org/tx/${transactionId}`
@@ -17,7 +20,13 @@ const handler = frames(async (ctx) => {
   // transactionId not valid
   if (!transactionId) {
     return {
-      image: <FrameStatus status="Error transaction not found" />,
+      image: (
+        <FrameNft
+          imgSrc={imageUrl}
+          title="Error transaction not found"
+          subtitle=""
+        />
+      ),
       buttons: [
         <Button action="post" key="1" target="/">
           Home
@@ -53,7 +62,7 @@ const handler = frames(async (ctx) => {
   }
 
   return {
-    image: <FrameStatus status={status} />,
+    image: <FrameNft imgSrc={imageUrl} title={status} subtitle="" />,
     buttons: [
       <Button key="1" action="link" target={txUrl}>
         See tx details

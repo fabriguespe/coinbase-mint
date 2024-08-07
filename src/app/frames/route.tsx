@@ -36,7 +36,7 @@ const handler = frames(async (ctx) => {
           action="tx"
           key="1"
           target={`/execute?chain=${chain}&collection=${collectionAddress}&token_id=${tokenId}`}
-          post_url={`/result?chain=${chain}`}
+          post_url={`/result?chain=${chain}&imageUrl=${nftMetadata.image}`}
         >
           Mint
         </Button>,
