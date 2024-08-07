@@ -48,9 +48,10 @@ const handler = frames(async (ctx) => {
       ),
       buttons: [
         <Button
-          action="post"
+          action="tx"
           key="1"
-          target={`/mint?chain=${chain}&collection=${collectionAddress}&token_id=${tokenId}`}
+          target={`/execute?chain=${chain}&collection=${collectionAddress}&token_id=${tokenId}`}
+          post_url={`/result?chain=${chain}`}
         >
           Mint
         </Button>,

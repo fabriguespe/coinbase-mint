@@ -1,7 +1,8 @@
-import { createPublicClient, encodeFunctionData, http } from "viem";
+import { Abi, createPublicClient, encodeFunctionData, http } from "viem";
 import { zora, base } from "viem/chains";
 import { ERC1155_CONTRACT_ABI } from "@/lib/abis";
 import { createCollectorClient } from "@zoralabs/protocol-sdk";
+import { TransactionTargetResponse } from "frames.js";
 
 export const NATIVE_TOKEN: `0x${string}` =
   "0x0000000000000000000000000000000000000000";
@@ -93,10 +94,10 @@ export async function mint1155Creator(
     chainId: "eip155:".concat(CHAIN_ID),
     method: "eth_sendTransaction",
     params: {
-      abi: ERC1155_CONTRACT_ABI,
+      abi: ERC1155_CONTRACT_ABI as Abi,
       to: collectionAddress as `0x${string}`,
       data: mintData,
       value: costs.totalCostEth.toString(),
     },
-  };
+  } as TransactionTargetResponse;
 }
