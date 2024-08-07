@@ -7,12 +7,6 @@ const zoraZdk = new ZDK({
       network: ZDKNetwork.Zora,
       chain: ZDKChain.ZoraMainnet,
     },
-  ],
-  apiKey: process.env.ZORA_API_KEY,
-});
-const baseZdk = new ZDK({
-  endpoint: "https://api.zora.co/graphql",
-  networks: [
     {
       network: ZDKNetwork.Base,
       chain: ZDKChain.BaseMainnet,
@@ -26,32 +20,36 @@ export const getNftData = async (
   collectionAddress: string,
   tokenId: string
 ) => {
-  let wZdk = zoraZdk;
-  if (chain === "base") {
-    wZdk = baseZdk;
-  }
-  const response = await wZdk.token({
-    token: {
-      address: collectionAddress as `0x${string}`,
-      tokenId: tokenId,
-    },
-    networks: [
-      {
-        network: ZDKNetwork.Base,
-        chain: ZDKChain.BaseMainnet,
+  try {
+    const response = await zoraZdk.token({
+      token: {
+        address: collectionAddress as `0x${string}`,
+        tokenId: tokenId,
       },
-    ],
-  });
-  let imgUrl = response.token?.token.image?.url;
-  if (imgUrl?.includes("ipfs://")) {
-    const hash = imgUrl.split("ipfs://").pop();
-    imgUrl = `https://gateway.pinata.cloud/ipfs/${hash}`;
-  }
+      networks:
+        chain === "base"
+          ? [{ network: ZDKNetwork.Base, chain: ZDKChain.BaseMainnet }]
+          : [{ network: ZDKNetwork.Zora, chain: ZDKChain.ZoraMainnet }],
+    });
+    let imgUrl = response.token?.token.image?.url;
+    if (imgUrl?.includes("ipfs://")) {
+      const hash = imgUrl.split("ipfs://").pop();
+      imgUrl = `https://gateway.pinata.cloud/ipfs/${hash}`;
+    }
 
-  return {
-    name: response?.token?.token.name || "",
-    description: response?.token?.token.description || "",
-    image: imgUrl || "",
-    mimeType: response?.token?.token.image?.mimeType || "",
-  };
+    return {
+      name: response?.token?.token.name || "",
+      description: response?.token?.token.description || "",
+      image: imgUrl || "",
+      mimeType: response?.token?.token.image?.mimeType || "",
+    };
+  } catch (error) {
+    console.error("Error fetching NFT data", error);
+    return {
+      name: "",
+      description: "",
+      image: "",
+      mimeType: "",
+    };
+  }
 };

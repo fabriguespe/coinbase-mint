@@ -1,24 +1,10 @@
-import {
-  encodeAbiParameters,
-  createPublicClient,
-  encodeFunctionData,
-  http,
-} from "viem";
+import { createPublicClient, encodeFunctionData, http } from "viem";
 import { zora, base } from "viem/chains";
-import {
-  ERC1155_CONTRACT_ABI,
-  ERC20_ABI,
-  ZORA_FIXED_PRICE_STRATEGY_ABI,
-  ZORA_MERKLE_MINT_STRATEGY_ABI,
-} from "@/lib/abis";
-import { TOKENS } from "./tokens";
+import { ERC1155_CONTRACT_ABI } from "@/lib/abis";
 import { createCollectorClient } from "@zoralabs/protocol-sdk";
 
 export const NATIVE_TOKEN: `0x${string}` =
   "0x0000000000000000000000000000000000000000";
-
-export const CHAIN_ID = parseInt(process.env.CHAIN_ID || "7777777"); // zora mainnet
-// export const CHAIN_ID = 8453; // base mainnet
 
 export const zoraPublicClient = createPublicClient({
   chain: zora,
@@ -35,56 +21,8 @@ const zoraCollectorClient = createCollectorClient({
 });
 const baseCollectorClient = createCollectorClient({
   chainId: zora.id,
-  publicClient: zoraPublicClient,
+  publicClient: basePublicClient,
 });
-
-export async function getTokenBalance(address: string, token: string) {
-  if (!address || !token) {
-    throw new Error("Address and token are required");
-  }
-
-  const tokenAddress = TOKENS[CHAIN_ID as number][token];
-  if (tokenAddress === NATIVE_TOKEN) {
-    const balance = (await zoraPublicClient.getBalance({
-      address: address as `0x${string}`,
-    })) as bigint;
-
-    return balance;
-  }
-
-  const balance = (await zoraPublicClient.readContract({
-    address: tokenAddress as `0x${string}`,
-    abi: ERC20_ABI,
-    functionName: "balanceOf",
-    args: [address as `0x${string}`],
-  })) as bigint;
-
-  return balance;
-}
-
-export async function checkTokenDecimals(
-  tokenAddress: string
-): Promise<number> {
-  if (!tokenAddress) {
-    throw new Error("Token address is required");
-  }
-
-  if (tokenAddress === NATIVE_TOKEN) {
-    return 18;
-  }
-
-  const decimals = (await zoraPublicClient.readContract({
-    address: tokenAddress as `0x${string}`,
-    abi: ERC20_ABI,
-    functionName: "decimals",
-  })) as number;
-
-  if (isNaN(decimals)) {
-    throw new Error(`Token decimals not available for address ${tokenAddress}`);
-  }
-
-  return decimals;
-}
 
 export async function getNftPrice(
   chain: string,
@@ -93,10 +31,11 @@ export async function getNftPrice(
   fromAddress: string,
   amount?: number
 ) {
-  let wrappedCollectorClient = zoraCollectorClient;
-  if (chain === "base") {
-    wrappedCollectorClient = baseCollectorClient;
+  if (!chain || !collectionAddress || !tokenId || !fromAddress) {
+    throw new Error("Invalid getNftPrice parameters");
   }
+
+  let wrappedCollectorClient = baseCollectorClient;
   const { prepareMint } = await wrappedCollectorClient.getToken({
     // 1155 contract address
     tokenContract: collectionAddress as `0x${string}`,
@@ -120,13 +59,11 @@ export async function mint1155Creator(
   amount?: number,
   comment?: string
 ) {
-  if (!collectionAddress || !tokenId || !fromAddress) {
+  if (!chain || !collectionAddress || !tokenId || !fromAddress) {
     throw new Error("Invalid mint parameters");
   }
-  let wrappedCollectorClient = zoraCollectorClient;
-  if (chain === "base") {
-    wrappedCollectorClient = baseCollectorClient;
-  }
+  let wrappedCollectorClient =
+    chain === "base" ? baseCollectorClient : zoraCollectorClient;
 
   // prepare the mint transaction
   const collectorData = await wrappedCollectorClient.mint({
@@ -141,7 +78,9 @@ export async function mint1155Creator(
     // optional comment to include with the mint
     mintComment: comment,
     // optional address that will receive a mint referral reward
-    mintReferral: "0x0C8596Ee50e06Ce710237c9c905D4aB63A132207",
+    mintReferral: process.env.ZORA_REFERRAL_ADDRESS
+      ? (process.env.ZORA_REFERRAL_ADDRESS as `0x${string}`)
+      : undefined,
     // account that is to invoke the mint transaction
     minterAccount: fromAddress as `0x${string}`,
   });
@@ -156,8 +95,9 @@ export async function mint1155Creator(
     amount
   );
 
+  const CHAIN_ID = chain === "base" ? "8453" : "7777777";
   return {
-    chainId: "eip155:".concat(CHAIN_ID.toString()),
+    chainId: "eip155:".concat(CHAIN_ID),
     method: "eth_sendTransaction",
     params: {
       abi: ERC1155_CONTRACT_ABI,

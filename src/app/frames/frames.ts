@@ -8,11 +8,15 @@ import {
   FRAMES_BASE_PATH,
   appURL,
 } from "@/lib/frames";
+import { imagesWorkerMiddleware } from "frames.js/middleware/images-worker";
 
 export const frames = createFrames({
   basePath: FRAMES_BASE_PATH,
   baseUrl: appURL(),
   middleware: [
+    imagesWorkerMiddleware({
+      imagesRoute: "/images",
+    }),
     farcasterHubContext({
       ...(process.env.NODE_ENV === "production"
         ? {
