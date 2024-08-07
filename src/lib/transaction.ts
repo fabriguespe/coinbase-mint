@@ -7,22 +7,22 @@ import { TransactionTargetResponse } from "frames.js";
 export const NATIVE_TOKEN: `0x${string}` =
   "0x0000000000000000000000000000000000000000";
 
-export const zoraPublicClient = createPublicClient({
-  chain: zora,
-  transport: http(),
-});
 export const basePublicClient = createPublicClient({
   chain: base,
   transport: http(),
 });
+const baseCollectorClient = createCollectorClient({
+  chainId: base.id,
+  publicClient: basePublicClient,
+});
 
+export const zoraPublicClient = createPublicClient({
+  chain: zora,
+  transport: http(),
+});
 const zoraCollectorClient = createCollectorClient({
   chainId: zora.id,
   publicClient: zoraPublicClient,
-});
-const baseCollectorClient = createCollectorClient({
-  chainId: zora.id,
-  publicClient: basePublicClient,
 });
 
 export async function getNftPrice(
@@ -35,20 +35,28 @@ export async function getNftPrice(
     throw new Error("Invalid getNftPrice parameters");
   }
 
-  let wrappedCollectorClient = baseCollectorClient;
-  const { prepareMint } = await wrappedCollectorClient.getToken({
-    // 1155 contract address
-    tokenContract: collectionAddress as `0x${string}`,
-    // 1155 token id
-    tokenId: BigInt(tokenId),
-    mintType: "1155",
-  });
-  const { costs } = prepareMint({
-    minterAccount: NATIVE_TOKEN,
-    quantityToMint: amount ? amount : 1,
-  });
-
-  return costs;
+  let wrappedCollectorClient =
+    chain === "base" ? baseCollectorClient : zoraCollectorClient;
+  try {
+    const { prepareMint } = await wrappedCollectorClient.getToken({
+      tokenContract: collectionAddress as `0x${string}`,
+      tokenId: BigInt(tokenId),
+      mintType: "1155",
+    });
+    try {
+      const { costs } = prepareMint({
+        minterAccount: "0x699d04F9994f181F3E310F70cF6aC8E8445aCe9A",
+        quantityToMint: amount ? amount : 1,
+      });
+      return costs;
+    } catch (e) {
+      console.error("Error fetching token costs", e, "2");
+      throw new Error("Error fetching token costs");
+    }
+  } catch (e) {
+    console.error("Error fetching token data", e, "1");
+    throw new Error("Error fetching token data");
+  }
 }
 
 export async function mint1155Creator(

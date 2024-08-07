@@ -19,8 +19,16 @@ const FrameNft = ({ imgSrc, title, subtitle, description }: FrameNftProps) => {
         tw="w-full flex flex-col absolute text-white bottom-0 py-16 px-10 text-[48px] font-light leading-8"
         style={{ backgroundColor: "rgba(0,0,0, 0.8)" }}
       >
-        <p tw="mr-2">
-          <b style={{ fontFamily: "Urbanist-Bold" }}>{title}</b>
+        <p>
+          <b
+            style={{
+              fontFamily: "Urbanist-Bold",
+              lineHeight: 1.5,
+              textAlign: "left",
+            }}
+          >
+            {title}
+          </b>
         </p>
         <p tw="-mt-4 text-[38px]">{subtitle}</p>
         <p tw="-mt-4 text-[38px]">{description}</p>

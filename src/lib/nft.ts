@@ -1,17 +1,26 @@
 import { ZDK, ZDKNetwork, ZDKChain } from "@zoralabs/zdk";
 
+const zoraNetworks = [
+  {
+    network: ZDKNetwork.Zora,
+    chain: ZDKChain.ZoraMainnet,
+  },
+];
 const zoraZdk = new ZDK({
   endpoint: "https://api.zora.co/graphql",
-  networks: [
-    {
-      network: ZDKNetwork.Zora,
-      chain: ZDKChain.ZoraMainnet,
-    },
-    {
-      network: ZDKNetwork.Base,
-      chain: ZDKChain.BaseMainnet,
-    },
-  ],
+  networks: zoraNetworks,
+  apiKey: process.env.ZORA_API_KEY,
+});
+
+const baseNetworks = [
+  {
+    network: ZDKNetwork.Base,
+    chain: ZDKChain.BaseMainnet,
+  },
+];
+const baseZdk = new ZDK({
+  endpoint: "https://api.zora.co/graphql",
+  networks: baseNetworks,
   apiKey: process.env.ZORA_API_KEY,
 });
 
@@ -21,15 +30,13 @@ export const getNftData = async (
   tokenId: string
 ) => {
   try {
-    const response = await zoraZdk.token({
+    const wrappedZdk = chain === "base" ? baseZdk : zoraZdk;
+    const response = await wrappedZdk.token({
       token: {
         address: collectionAddress as `0x${string}`,
         tokenId: tokenId,
       },
-      networks:
-        chain === "base"
-          ? [{ network: ZDKNetwork.Base, chain: ZDKChain.BaseMainnet }]
-          : [{ network: ZDKNetwork.Zora, chain: ZDKChain.ZoraMainnet }],
+      networks: chain === "base" ? baseNetworks : zoraNetworks,
     });
     let imgUrl = response.token?.token.image?.url;
     if (imgUrl?.includes("ipfs://")) {

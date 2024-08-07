@@ -25,7 +25,7 @@ export const POST = frames(async (ctx) => {
     );
     return transaction(txCalldata);
   } catch (e) {
-    console.log("mint error", e);
+    console.error("mint error", e);
     const errorMsg = (e as Error).message || "";
     return {
       image: (
