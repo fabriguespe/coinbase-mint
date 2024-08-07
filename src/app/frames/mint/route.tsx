@@ -33,12 +33,7 @@ const handler = frames(async (ctx) => {
 
   try {
     const nftMetadata = await getNftData(chain, collectionAddress, tokenId);
-    const nftPrice = await getNftPrice(
-      chain,
-      collectionAddress,
-      tokenId,
-      userAddress
-    );
+    const nftPrice = await getNftPrice(chain, collectionAddress, tokenId);
 
     const formattedNftPrice: string = parseFloat(
       formatUnits(nftPrice.totalCostEth, 18)
@@ -72,9 +67,9 @@ const handler = frames(async (ctx) => {
           action="tx"
           key="1"
           target={`/api/mint?chain=${chain}&collection=${collectionAddress}&token_id=${tokenId}&user_address=${userAddress}`}
-          post_url={`/result?transaction_type=mint&collection=${collectionAddress}&token_id=${tokenId}`}
+          post_url={`/result?chain=${chain}`}
         >
-          Mint
+          Confirm Mint
         </Button>,
       ],
       imageOptions: {

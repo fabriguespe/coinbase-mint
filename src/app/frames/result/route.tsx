@@ -1,49 +1,30 @@
 import { Button } from "frames.js/next";
 import { frames } from "@/app/frames/frames";
-import { zoraPublicClient } from "@/lib/transaction";
+import { basePublicClient, zoraPublicClient } from "@/lib/transaction";
 import { appURL } from "@/lib/frames";
 
 const handler = frames(async (ctx) => {
-  const transactionType = ctx.url.searchParams.get("transaction_type");
-
-  const isValidTransactionType =
-    !!transactionType && ["send", "swap", "mint"].includes(transactionType);
-
   const transactionId =
     ctx.message?.transactionId || ctx.url.searchParams.get("tx");
 
-  // transaction_type not valid
-  if (!isValidTransactionType || !transactionId) {
+  const searchParams = new URLSearchParams(ctx.url.searchParams);
+  const chain = searchParams.get("chain") || "zora";
+  const txUrl =
+    chain === "base"
+      ? `https://basescan.org/tx/${transactionId}`
+      : `https://explorer.zora.energy/tx/${transactionId}`;
+
+  // transactionId not valid
+  if (!transactionId) {
     return {
       image: (
         <div tw="relative flex flex-col text-center items-center justify-center">
-          <img src={`${appURL()}/images/frames/landing.png`} tw="w-full" />
+          <img src={`${appURL()}/images/frame-landing.gif`} tw="w-full" />
         </div>
       ),
       buttons: [
-        <Button
-          action="post"
-          key="1"
-          target="/transaction?transaction_type=swap"
-        >
-          Swap
-        </Button>,
-        <Button
-          action="post"
-          key="2"
-          target="/transaction?transaction_type=send"
-        >
-          Send
-        </Button>,
-        <Button
-          action="post"
-          key="3"
-          target="/transaction?transaction_type=mint"
-        >
-          Mint
-        </Button>,
-        <Button action="post" key="4" target="/info">
-          Learn More
+        <Button action="post" key="1" target="/">
+          Home
         </Button>,
       ],
     };
@@ -51,9 +32,14 @@ const handler = frames(async (ctx) => {
 
   let transactionReceipt: any = null;
   try {
-    transactionReceipt = await zoraPublicClient.getTransactionReceipt({
-      hash: transactionId as `0x${string}`,
-    });
+    transactionReceipt =
+      chain === "zora"
+        ? await zoraPublicClient.getTransactionReceipt({
+            hash: transactionId as `0x${string}`,
+          })
+        : await basePublicClient.getTransactionReceipt({
+            hash: transactionId as `0x${string}`,
+          });
   } catch (e) {
     console.error(e);
   }
@@ -62,24 +48,17 @@ const handler = frames(async (ctx) => {
     return {
       image: (
         <div tw="relative flex flex-col text-center items-center justify-center">
-          <img
-            src={`${appURL()}/images/frames/result/loading.png`}
-            tw="w-full"
-          />
+          Loading...
         </div>
       ),
       buttons: [
-        <Button
-          key="1"
-          action="link"
-          target={`https://basescan.org/tx/${transactionId}`}
-        >
-          See tx on Zora Explorer
+        <Button key="1" action="link" target={txUrl}>
+          See tx details
         </Button>,
         <Button
           key="2"
           action="post"
-          target={`/transaction-result?transaction_type=${transactionType}&tx=${transactionId}`}
+          target={`/result?chain=${chain}&tx=${transactionId}`}
         >
           Refresh
         </Button>,
@@ -94,10 +73,7 @@ const handler = frames(async (ctx) => {
     return {
       image: (
         <div tw="relative flex flex-col text-center items-center justify-center">
-          <img
-            src={`${appURL()}/images/frames/result/success.png`}
-            tw="w-full"
-          />
+          Tx Successfull
         </div>
       ),
       buttons: [
@@ -117,10 +93,7 @@ const handler = frames(async (ctx) => {
     return {
       image: (
         <div tw="relative flex flex-col text-center items-center justify-center">
-          <img
-            src={`${appURL()}/images/frames/result/failed.png`}
-            tw="w-full"
-          />
+          Tx Failed
         </div>
       ),
       buttons: [
@@ -129,7 +102,7 @@ const handler = frames(async (ctx) => {
           action="link"
           target={`https://basescan.org/tx/${transactionId}`}
         >
-          See tx on Zora Explorer
+          See tx details
         </Button>,
         <Button action="post" key="2" target="/">
           Home
@@ -141,21 +114,17 @@ const handler = frames(async (ctx) => {
   return {
     image: (
       <div tw="relative flex flex-col text-center items-center justify-center">
-        <img src={`${appURL()}/images/frames/result/loading.png`} tw="w-full" />
+        Loading...
       </div>
     ),
     buttons: [
-      <Button
-        key="1"
-        action="link"
-        target={`https://basescan.org/tx/${transactionId}`}
-      >
-        See tx on Basescan
+      <Button key="1" action="link" target={txUrl}>
+        See tx details
       </Button>,
       <Button
         key="2"
         action="post"
-        target={`/transaction-result?transaction_type=${transactionType}&tx=${transactionId}`}
+        target={`/result?chain=${chain}&tx=${transactionId}`}
       >
         Refresh
       </Button>,
