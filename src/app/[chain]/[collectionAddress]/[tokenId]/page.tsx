@@ -3,15 +3,20 @@ import type { Metadata } from "next";
 import { fetchMetadata } from "frames.js/next";
 import { RedirectToZora } from "@/app/components/RedirectToZora";
 
+interface HomeProps {
+  params: {
+    chain: string;
+    collectionAddress: string;
+    tokenId: string;
+  };
+}
+
 export async function generateMetadata({
   params,
-}: {
-  params: { chain: string; collectionAddress: string; tokenId: string };
-}): Promise<Metadata> {
+}: HomeProps): Promise<Metadata> {
   return {
-    title: "MEM_FRAME+",
-    description:
-      "RANDOM ACCESS MEMORIES | LATAM CULTURE BUILDERS is a collection curated by Newtro that redefines the role of the BUILDER on the internet...",
+    title: "XMTP x Base x Zora",
+    description: "Mint with a frame on zora...",
     other: {
       ...(await fetchMetadata(
         new URL(
@@ -22,10 +27,14 @@ export async function generateMetadata({
     },
   };
 }
-export default function Home() {
+export default function Home({ params }: HomeProps) {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <RedirectToZora />
+      <RedirectToZora
+        chain={params.chain}
+        collectionAddress={params.collectionAddress}
+        tokenId={params.tokenId}
+      />
     </main>
   );
 }

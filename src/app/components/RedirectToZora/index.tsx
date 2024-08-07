@@ -3,10 +3,19 @@
 import { useEffect } from "react";
 import { redirect } from "next/navigation";
 
-export const RedirectToZora = () => {
+interface RedirectToZoraProps {
+  chain: string;
+  collectionAddress: string;
+  tokenId: string;
+}
+export const RedirectToZora = ({
+  chain,
+  collectionAddress,
+  tokenId,
+}: RedirectToZoraProps) => {
   useEffect(() => {
     redirect(
-      "https://zora.co/collect/zora:0xfdd784e1566f20324d3da4aff4bdbe4809437e1b/11"
+      `https://zora.co/collect/${chain}:${collectionAddress}/${tokenId}`
     );
   });
   return <></>;
