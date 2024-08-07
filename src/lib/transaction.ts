@@ -28,10 +28,9 @@ export async function getNftPrice(
   chain: string,
   collectionAddress: string,
   tokenId: string,
-  fromAddress: string,
   amount?: number
 ) {
-  if (!chain || !collectionAddress || !tokenId || !fromAddress) {
+  if (!chain || !collectionAddress || !tokenId) {
     throw new Error("Invalid getNftPrice parameters");
   }
 
@@ -44,7 +43,7 @@ export async function getNftPrice(
     mintType: "1155",
   });
   const { costs } = prepareMint({
-    minterAccount: fromAddress as `0x${string}`,
+    minterAccount: NATIVE_TOKEN,
     quantityToMint: amount ? amount : 1,
   });
 
@@ -87,13 +86,7 @@ export async function mint1155Creator(
 
   const mintData = encodeFunctionData(collectorData.parameters);
 
-  const costs = await getNftPrice(
-    chain,
-    collectionAddress,
-    tokenId,
-    fromAddress,
-    amount
-  );
+  const costs = await getNftPrice(chain, collectionAddress, tokenId, amount);
 
   const CHAIN_ID = chain === "base" ? "8453" : "7777777";
   return {
