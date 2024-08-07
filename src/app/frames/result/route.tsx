@@ -1,7 +1,7 @@
 import { Button } from "frames.js/next";
 import { frames } from "@/app/frames/frames";
 import { basePublicClient, zoraPublicClient } from "@/lib/transaction";
-import { appURL } from "@/lib/frames";
+import FrameStatus from "@/app/components/FrameStatus";
 
 const handler = frames(async (ctx) => {
   const transactionId =
@@ -17,16 +17,15 @@ const handler = frames(async (ctx) => {
   // transactionId not valid
   if (!transactionId) {
     return {
-      image: (
-        <div tw="relative flex flex-col text-center items-center justify-center">
-          <img src={`${appURL()}/images/frame-landing.gif`} tw="w-full" />
-        </div>
-      ),
+      image: <FrameStatus status="Error transaction not found" />,
       buttons: [
         <Button action="post" key="1" target="/">
           Home
         </Button>,
       ],
+      imageOptions: {
+        aspectRatio: "1:1",
+      },
     };
   }
 
@@ -44,79 +43,17 @@ const handler = frames(async (ctx) => {
     console.error(e);
   }
 
+  let status = "";
   if (!transactionReceipt) {
-    return {
-      image: (
-        <div tw="relative flex flex-col text-center items-center justify-center">
-          Loading...
-        </div>
-      ),
-      buttons: [
-        <Button key="1" action="link" target={txUrl}>
-          See tx details
-        </Button>,
-        <Button
-          key="2"
-          action="post"
-          target={`/result?chain=${chain}&tx=${transactionId}`}
-        >
-          Refresh
-        </Button>,
-        <Button action="post" key="3" target="/">
-          Home
-        </Button>,
-      ],
-    };
-  }
-
-  if (transactionReceipt.status === "success") {
-    return {
-      image: (
-        <div tw="relative flex flex-col text-center items-center justify-center">
-          Tx Successfull
-        </div>
-      ),
-      buttons: [
-        <Button
-          key="1"
-          action="link"
-          target={`https://basescan.org/tx/${transactionId}`}
-        >
-          See tx on Zora Explorer
-        </Button>,
-        <Button action="post" key="2" target="/">
-          Home
-        </Button>,
-      ],
-    };
+    status = "Loading...";
+  } else if (transactionReceipt.status === "success") {
+    status = "Transaction Successful";
   } else if (transactionReceipt.status === "reverted") {
-    return {
-      image: (
-        <div tw="relative flex flex-col text-center items-center justify-center">
-          Tx Failed
-        </div>
-      ),
-      buttons: [
-        <Button
-          key="1"
-          action="link"
-          target={`https://basescan.org/tx/${transactionId}`}
-        >
-          See tx details
-        </Button>,
-        <Button action="post" key="2" target="/">
-          Home
-        </Button>,
-      ],
-    };
+    status = "Transaction Failed";
   }
 
   return {
-    image: (
-      <div tw="relative flex flex-col text-center items-center justify-center">
-        Loading...
-      </div>
-    ),
+    image: <FrameStatus status={status} />,
     buttons: [
       <Button key="1" action="link" target={txUrl}>
         See tx details
@@ -132,6 +69,9 @@ const handler = frames(async (ctx) => {
         Home
       </Button>,
     ],
+    imageOptions: {
+      aspectRatio: "1:1",
+    },
   };
 });
 

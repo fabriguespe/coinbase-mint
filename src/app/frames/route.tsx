@@ -6,6 +6,7 @@ import { appURL } from "@/lib/frames";
 import { getNftData } from "@/lib/nft";
 import { getNftPrice } from "@/lib/transaction";
 import { formatUnits } from "viem";
+import FrameNft from "@/app/components/FrameNft";
 
 const handler = frames(async (ctx) => {
   const searchParams = new URLSearchParams(ctx.url.searchParams);
@@ -24,27 +25,11 @@ const handler = frames(async (ctx) => {
     ).toFixed(6);
     return {
       image: (
-        <div tw="relative flex flex-col text-center items-center justify-center">
-          <img
-            src={nftMetadata.image}
-            tw="h-full"
-            style={{ opacity: 1, objectFit: "cover" }}
-          />
-          <div
-            tw="w-full flex flex-col absolute text-white bottom-0 py-16 px-10 text-[48px] font-light leading-8"
-            style={{ backgroundColor: "rgba(0,0,0, 0.8)" }}
-          >
-            <div tw="flex items-center">
-              <p tw="mr-2">
-                <b style={{ fontFamily: "Urbanist-Bold" }}>
-                  {nftMetadata.name}
-                </b>{" "}
-              </p>
-              <p tw="">#{tokenId}</p>
-            </div>
-            <div tw="flex -mt-4">{formattedNftPrice} ETH</div>
-          </div>
-        </div>
+        <FrameNft
+          imgSrc={nftMetadata.image}
+          title={`${nftMetadata.name} #${tokenId}`}
+          subtitle={`${formattedNftPrice} ETH`}
+        />
       ),
       buttons: [
         <Button
@@ -65,22 +50,12 @@ const handler = frames(async (ctx) => {
     console.error("Error fetching NFT data", error);
     return {
       image: (
-        <div tw="relative flex flex-col text-center items-center justify-center">
-          <img
-            src={`${appURL()}/images/frame-failed-balance.png`}
-            tw="w-full"
-          />
-          <div
-            tw="w-full flex flex-col absolute text-white bottom-0 py-16 px-10 text-[48px] font-light leading-8"
-            style={{ backgroundColor: "rgba(0,0,0, 0.8)" }}
-          >
-            <p tw="mr-2">
-              <b style={{ fontFamily: "Urbanist-Bold" }}>{errorMsg}</b>{" "}
-            </p>
-            <p tw="-mt-4 text-[32px]">{collectionAddress}</p>
-            <p tw="-mt-4 text-[32px]">tokenId {tokenId}</p>
-          </div>
-        </div>
+        <FrameNft
+          imgSrc={`${appURL()}/images/frame-landing.gif`}
+          title={errorMsg}
+          subtitle={collectionAddress}
+          description={`TokenId #${tokenId}`}
+        />
       ),
       buttons: [
         <Button action="post" key="1" target="/">
