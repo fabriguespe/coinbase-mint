@@ -34,22 +34,29 @@ const handler = frames(async (ctx) => {
         "x-api-key": OPENSEA_API_KEY,
       },
     }).then((res) => res.json());
+
+    if (data?.error) {
+      throw new Error(data?.error);
+    }
+
     let tokenStandard;
     if (tokenId) {
       tokenStandard = data?.nft.token_standard || "";
-      nftImage = data?.nft.display_image_url || "";
+      nftImage = data?.nft.display_image_url || data?.nft.image_url;
       nftName = data?.nft.name || "";
     } else {
       tokenStandard = data?.nfts[0].token_standard || "";
-      nftImage = data?.nfts[0].display_image_url || "";
+      nftImage = data?.nfts[0].display_image_url || data?.nfts[0].image_url;
       nftName = data?.nfts[0].name || "";
     }
-    if (
-      data?.error ||
-      (tokenStandard !== "erc1155" && tokenStandard !== "erc721")
-    ) {
-      throw new Error(
-        data?.error || `Token Standard ${tokenStandard} not supported`
+    if (tokenStandard !== "erc1155" && tokenStandard !== "erc721") {
+      throw new Error(`Token Standard ${tokenStandard} not supported`);
+    }
+
+    if (nftImage.startsWith("https://ipfs.io/ipfs/")) {
+      nftImage = nftImage.replace(
+        "https://ipfs.io/ipfs/",
+        "https://gateway.pinata.cloud/ipfs/"
       );
     }
 
