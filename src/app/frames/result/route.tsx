@@ -1,8 +1,8 @@
 import { Button } from "frames.js/next";
 import { frames } from "@/app/frames/frames";
-import { basePublicClient, zoraPublicClient } from "@/lib/transaction";
 import { appURL } from "@/lib/frames";
 import FrameNft from "@/app/components/FrameNft";
+import { getBlockExplorer, getTransactionReceipt } from "@/lib/utils";
 
 const handler = frames(async (ctx) => {
   const transactionId =
@@ -11,11 +11,8 @@ const handler = frames(async (ctx) => {
   const searchParams = new URLSearchParams(ctx.url.searchParams);
   const chain = searchParams.get("chain") || "zora";
   const imageUrl =
-    searchParams.get("imageUrl") || `${appURL()}/images/frame-landing.gif`;
-  const txUrl =
-    chain === "base"
-      ? `https://basescan.org/tx/${transactionId}`
-      : `https://explorer.zora.energy/tx/${transactionId}`;
+    searchParams.get("imageUrl") || `${appURL()}/images/frame-result.png`;
+  const txUrl = getBlockExplorer(chain, transactionId as `0x${string}`);
 
   // transactionId not valid
   if (!transactionId) {
@@ -40,14 +37,10 @@ const handler = frames(async (ctx) => {
 
   let transactionReceipt: any = null;
   try {
-    transactionReceipt =
-      chain === "zora"
-        ? await zoraPublicClient.getTransactionReceipt({
-            hash: transactionId as `0x${string}`,
-          })
-        : await basePublicClient.getTransactionReceipt({
-            hash: transactionId as `0x${string}`,
-          });
+    transactionReceipt = await getTransactionReceipt(
+      chain,
+      transactionId as `0x${string}`
+    );
   } catch (e) {
     console.error(e);
   }
