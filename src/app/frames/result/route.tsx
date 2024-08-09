@@ -63,12 +63,9 @@ const handler = frames(async (ctx) => {
       <Button
         key="2"
         action="post"
-        target={`/result?chain=${chain}&tx=${transactionId}`}
+        target={`/result?chain=${chain}&tx=${transactionId}&imageUrl=${imageUrl}`}
       >
         Refresh
-      </Button>,
-      <Button action="post" key="3" target="/">
-        Home
       </Button>,
     ],
     imageOptions: {
