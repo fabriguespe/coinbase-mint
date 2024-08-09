@@ -61,11 +61,17 @@ const handler = frames(async (ctx) => {
     }
 
     // retrieve nft metadata and price
-    const nftPrice = await getNftPrice(chain, collectionAddress, tokenId);
+    const nftPrice = await getNftPrice(
+      chain,
+      collectionAddress,
+      tokenStandard,
+      tokenId
+    );
 
     const formattedNftPrice: string = parseFloat(
       formatUnits(nftPrice.totalCostEth, 18)
     ).toFixed(6);
+
     return {
       image: (
         <FrameNft
@@ -78,7 +84,7 @@ const handler = frames(async (ctx) => {
         <Button
           action="tx"
           key="1"
-          target={`/execute?chain=${chain}&collection=${collectionAddress}&token_id=${tokenId}`}
+          target={`/execute?chain=${chain}&collection=${collectionAddress}&token_id=${tokenId}&token_standard=${tokenStandard}`}
           post_url={`/result?chain=${chain}&imageUrl=${nftImage}`}
         >
           Mint
@@ -95,9 +101,8 @@ const handler = frames(async (ctx) => {
       image: (
         <FrameNft
           imgSrc={nftImage || `${appURL()}/images/frame-failed.png`}
-          title={errorMsg}
+          title={`Error: ${errorMsg}`}
           subtitle={nftName || collectionAddress}
-          description={tokenId ? `TokenId #${tokenId}` : collectionAddress}
         />
       ),
       buttons: [

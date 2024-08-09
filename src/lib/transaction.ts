@@ -1,16 +1,12 @@
 import { Abi, encodeFunctionData, getAddress } from "viem";
 import { ERC1155_CONTRACT_ABI } from "@/lib/abis";
 import { TransactionTargetResponse } from "frames.js";
-import {
-  getChainId,
-  getCollectorClient,
-  isSupportedChain,
-  NATIVE_TOKEN,
-} from "./utils";
+import { getChainId, getCollectorClient, isSupportedChain } from "./utils";
 
 export async function getNftPrice(
   chain: string,
   collectionAddress: string,
+  tokenStandard: string,
   tokenId?: string,
   amount?: number
 ) {
@@ -19,15 +15,14 @@ export async function getNftPrice(
   }
 
   let wrappedCollectorClient = getCollectorClient(chain);
-  const { prepareMint } = await wrappedCollectorClient.getToken({
-    tokenContract: getAddress(collectionAddress),
-    tokenId: tokenId && tokenId != "" ? BigInt(tokenId) : undefined,
-    mintType: tokenId && tokenId != "" ? "1155" : "721",
+
+  const costs = await wrappedCollectorClient.getMintCosts({
+    collection: getAddress(collectionAddress),
+    quantityMinted: amount ? amount : 1,
+    mintType: tokenStandard === "erc1155" ? "1155" : "721",
+    tokenId: tokenId ? BigInt(tokenId) : undefined,
   });
-  const { costs } = prepareMint({
-    minterAccount: NATIVE_TOKEN,
-    quantityToMint: amount ? amount : 1,
-  });
+
   return costs;
 }
 
@@ -35,6 +30,7 @@ export async function mint1155Creator(
   chain: string,
   collectionAddress: string,
   fromAddress: string,
+  tokenStandard: string,
   tokenId?: string,
   amount?: number,
   comment?: string
@@ -52,7 +48,7 @@ export async function mint1155Creator(
 
   // prepare the mint transaction
   let mintObject: any = {};
-  if (tokenId && tokenId != "") {
+  if (tokenStandard === "erc1155" && tokenId) {
     mintObject = {
       tokenContract: getAddress(collectionAddress),
       mintType: "1155",
@@ -66,7 +62,7 @@ export async function mint1155Creator(
         : undefined,
       minterAccount: fromAddress as `0x${string}`,
     };
-  } else {
+  } else if (tokenStandard === "erc721") {
     mintObject = {
       tokenContract: getAddress(collectionAddress),
       mintType: "721",
@@ -82,7 +78,13 @@ export async function mint1155Creator(
 
   const mintData = encodeFunctionData(collectorData.parameters);
 
-  const costs = await getNftPrice(chain, collectionAddress, tokenId, amount);
+  const costs = await getNftPrice(
+    chain,
+    collectionAddress,
+    tokenStandard,
+    tokenId,
+    amount
+  );
 
   let CHAIN_ID = getChainId(chain);
   return {

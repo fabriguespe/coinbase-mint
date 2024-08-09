@@ -12,13 +12,15 @@ export const POST = frames(async (ctx) => {
   const chain = searchParams.get("chain") || "";
   const collectionAddress = searchParams.get("collection") || "";
   const tokenId = searchParams.get("token_id") || "";
+  const tokenStandard = searchParams.get("token_standard") || "";
 
   try {
     if (
       !chain ||
       !collectionAddress ||
       (chain && !isSupportedChain(chain)) ||
-      !user_address
+      !user_address ||
+      !tokenStandard
     ) {
       throw new Error("Invalid parameters");
     }
@@ -28,6 +30,7 @@ export const POST = frames(async (ctx) => {
       chain,
       collectionAddress,
       user_address,
+      tokenStandard,
       tokenId
     );
     return transaction(txCalldata);
@@ -40,7 +43,6 @@ export const POST = frames(async (ctx) => {
           imgSrc={`${appURL()}/images/frame-failed.png`}
           title={errorMsg}
           subtitle={collectionAddress}
-          description={tokenId ? `TokenId ${tokenId}` : ""}
         />
       ),
       buttons: [

@@ -18,17 +18,16 @@ const FrameNft = ({ imgSrc, title, subtitle, description }: FrameNftProps) => {
           objectFit: "cover",
         }}
       />
-      <div tw="w-full flex items-center justify-between absolute text-white bottom-0 text-[38px] font-light leading-8">
+      <div tw="w-full flex items-center justify-between absolute text-white bottom-[20px] text-[36px] px-[10px]">
         <div
-          tw="h-fit max-w-3/4 w-fit flex px-4 py-0"
-          style={{ backgroundColor: "rgba(0,0,0, 0.7)" }}
+          tw="max-w-3/4 w-fit flex px-4 rounded-xl py-0"
+          style={{ backgroundColor: "rgba(0,0,0, 0.6)", lineHeight: "0.1" }}
         >
           <p>
             <b
               style={{
                 fontFamily: "Urbanist-Bold",
                 textAlign: "left",
-                textOverflow: "ellipsis",
               }}
             >
               {title.length > 44 ? `${title.slice(0, 44)}...` : title}
@@ -36,8 +35,8 @@ const FrameNft = ({ imgSrc, title, subtitle, description }: FrameNftProps) => {
           </p>
         </div>
         <div
-          tw="h-fit w-fit max-w-1/4 flex px-4 py-0"
-          style={{ backgroundColor: "rgba(0,0,0, 0.7)" }}
+          tw="w-fit flex px-4 rounded-xl py-0"
+          style={{ backgroundColor: "rgba(0,0,0, 0.6)", lineHeight: "0.1" }}
         >
           <p tw="">{subtitle}</p>
           <p tw="">{description}</p>
