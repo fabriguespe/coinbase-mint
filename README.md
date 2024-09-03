@@ -32,3 +32,12 @@ Example erc721
 Other
 * base:
   * frame: http://localhost:3000/base/0xa902601ece8b81d906b7deceb67f5badcbdff7df/1
+
+MINT Coinbase wallet w standard https://url/eip55:[chainId]:[nft type]:[contractAddress]
+* CoffeDays
+  * https://wallet.coinbase.com/nft/mint/eip155:8453:erc721:0xf16755b43eE1a458161f0faE5a9124729f4f6B1B
+  * frame: http://localhost:3000/eip55/8453/erc721/0xf16755b43eE1a458161f0faE5a9124729f4f6B1B
+
+* Let the shield shine:
+  * https://wallet.coinbase.com/nft/mint/eip155:8453:erc721:0x2a8e46E78BA9667c661326820801695dcf1c403E
+  * frame: http://localhost:3000/eip55/8453/erc721/0x2a8e46E78BA9667c661326820801695dcf1c403E

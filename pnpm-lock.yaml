@@ -12,8 +12,8 @@ dependencies:
     specifier: ^2.4.0
     version: 2.4.0
   frames.js:
-    specifier: ^0.18.1
-    version: 0.18.1(@cloudflare/workers-types@4.20240806.0)(@lens-protocol/client@2.3.1)(@types/express@4.17.21)(@xmtp/frames-validator@0.6.2)(next@14.2.5)(react-dom@18.3.1)(react@18.3.1)(typescript@5.5.4)(zod@3.23.8)
+    specifier: ^0.19.0
+    version: 0.19.0(@cloudflare/workers-types@4.20240806.0)(@lens-protocol/client@2.3.1)(@types/express@4.17.21)(@xmtp/frames-validator@0.6.2)(next@14.2.5)(react-dom@18.3.1)(react@18.3.1)(typescript@5.5.4)(zod@3.23.8)
   next:
     specifier: 14.2.5
     version: 14.2.5(react-dom@18.3.1)(react@18.3.1)
@@ -29,8 +29,8 @@ dependencies:
 
 devDependencies:
   '@frames.js/debugger':
-    specifier: ^0.3.7
-    version: 0.3.7(@lens-protocol/metadata@1.2.0)(@types/react@18.3.3)(ethers@5.7.2)(typescript@5.5.4)
+    specifier: ^0.3.11
+    version: 0.3.11(@lens-protocol/metadata@1.2.0)(@types/react@18.3.3)(ethers@5.7.2)(typescript@5.5.4)
   '@types/node':
     specifier: ^20
     version: 20.14.14
@@ -412,8 +412,8 @@ packages:
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
     engines: {node: '>=14'}
 
-  /@frames.js/debugger@0.3.7(@lens-protocol/metadata@1.2.0)(@types/react@18.3.3)(ethers@5.7.2)(typescript@5.5.4):
-    resolution: {integrity: sha512-bExlpsRqxoBDuq86Pw93A4Z7h4mK+zAv6vel9k+T0nGl2/XzEkDmf0qJTJf0SXqzARLaoCTjt7FtMVtYB2YnCw==}
+  /@frames.js/debugger@0.3.11(@lens-protocol/metadata@1.2.0)(@types/react@18.3.3)(ethers@5.7.2)(typescript@5.5.4):
+    resolution: {integrity: sha512-zPylBa5ZTt9NV4wSl/CI4OM5ERNe7NOiQH9bKSI1RCb5oUgPvhNfg3ta0WT0KSgooG2HDx7/enQsO5iLLjxSQA==}
     engines: {node: '>=18.17.0'}
     hasBin: true
     dependencies:
@@ -3761,8 +3761,8 @@ packages:
       mime-types: 2.1.35
     dev: false
 
-  /frames.js@0.18.1(@cloudflare/workers-types@4.20240806.0)(@lens-protocol/client@2.3.1)(@types/express@4.17.21)(@xmtp/frames-validator@0.6.2)(next@14.2.5)(react-dom@18.3.1)(react@18.3.1)(typescript@5.5.4)(zod@3.23.8):
-    resolution: {integrity: sha512-4IFisYMLnu7Adogp6jZSgQF6OtJSA6nmIHUS2Vb4eMqusM3EwqrRQSneW5gU2S6D4UP9UTHWVFqUNOnRtkKusg==}
+  /frames.js@0.19.0(@cloudflare/workers-types@4.20240806.0)(@lens-protocol/client@2.3.1)(@types/express@4.17.21)(@xmtp/frames-validator@0.6.2)(next@14.2.5)(react-dom@18.3.1)(react@18.3.1)(typescript@5.5.4)(zod@3.23.8):
+    resolution: {integrity: sha512-+huSwV9zFqjWBzigMsPbUpdk5HeuzCuRV7p5UfgIqZBTFzMAk4xC+PWYP97xjieiGkprb35U5h4oLDERHDn8Ng==}
     peerDependencies:
       '@cloudflare/workers-types': ^4.20240320.1
       '@lens-protocol/client': ^2.0.0

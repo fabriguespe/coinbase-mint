@@ -149,6 +149,37 @@ const supportedChains = [
   "arbitrum",
   // "blast",
 ];
+const supportedChainIds = [
+  "7777777",
+  "1",
+  "10",
+  "8453",
+  "42161",
+  // "81457",
+];
+
 export function isSupportedChain(chain: string) {
   return supportedChains.includes(chain);
+}
+
+export function isSupportedChainId(chainId: string) {
+  return supportedChainIds.includes(chainId);
+}
+
+export function getChainName(chainId: string) {
+  switch (chainId) {
+    case "7777777":
+      return "zora";
+    case "1":
+      return "eth";
+    case "10":
+      return "optimism";
+    case "8453":
+      return "base";
+    case "42161":
+      return "arbitrum";
+    // case "81457":
+    //   return "blast";
+  }
+  return "base";
 }
