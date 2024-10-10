@@ -49,6 +49,7 @@ export const POST = frames(async (ctx) => {
 
       return transaction(txCalldata);
     } else {
+      /*
       const isMintable = await isCoinbase1155Mintable(
         chainId,
         collectionAddress,
@@ -58,6 +59,7 @@ export const POST = frames(async (ctx) => {
       if (!isMintable) {
         throw new Error("NFT is no longer mintable");
       }
+      */
 
       const nftPrice = await getCoinbase1155NftCost(
         chainId,
