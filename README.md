@@ -33,11 +33,16 @@ Other
 * base:
   * frame: http://localhost:3000/base/0xa902601ece8b81d906b7deceb67f5badcbdff7df/1
 
-MINT Coinbase wallet w standard https://url/eip55:[chainId]:[nftType]:[contractAddress]
+MINT Coinbase wallet w standard https://url/eip155:[chainId]:[nftType]:[contractAddress]
 * CoffeDays
   * https://wallet.coinbase.com/nft/mint/eip155:8453:erc721:0xf16755b43eE1a458161f0faE5a9124729f4f6B1B
-  * frame: http://localhost:3000/eip55/8453/erc721/0xf16755b43eE1a458161f0faE5a9124729f4f6B1B
+  * frame: http://localhost:3000/eip155/8453/erc721/0xf16755b43eE1a458161f0faE5a9124729f4f6B1B
 
 * Let the shield shine:
   * https://wallet.coinbase.com/nft/mint/eip155:8453:erc721:0x2a8e46E78BA9667c661326820801695dcf1c403E
-  * frame: http://localhost:3000/eip55/8453/erc721/0x2a8e46E78BA9667c661326820801695dcf1c403E
+  * frame: http://localhost:3000/eip155/8453/erc721/0x2a8e46E78BA9667c661326820801695dcf1c403E
+
+* new
+  * coinbase: https://wallet.coinbase.com/nft/mint/eip155:8453:erc1155:0x9a83e7b27b8a9b68e8dc665a0049f2f004287a20:1
+  * frame: http://localhost:3000/eip155/8453/erc1155/0x9a83e7b27b8a9b68e8dc665a0049f2f004287a20/1
+  * warpcast: https://warpcast.com/~/developers/frames?url=https://xmtp-coinbase-mint-frame.vercel.app/8453/erc1155/0x9a83e7b27b8a9b68e8dc665a0049f2f004287a20/1

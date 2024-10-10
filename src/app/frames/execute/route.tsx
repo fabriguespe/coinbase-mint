@@ -1,5 +1,5 @@
 // import opensea from "@api/opensea";
-import { mint1155Creator } from "@/lib/transaction";
+import { mint721or1155Creator } from "@/lib/transaction";
 import { frames } from "@/app/frames/frames";
 import { Button, transaction } from "frames.js/core";
 import { appURL } from "@/lib/frames";
@@ -20,19 +20,21 @@ export const POST = frames(async (ctx) => {
       !collectionAddress ||
       (chain && !isSupportedChain(chain)) ||
       !user_address ||
-      !tokenStandard
+      !tokenStandard ||
+      (tokenStandard === "erc1155" && !tokenId) ||
+      (tokenStandard !== "erc1155" && tokenStandard !== "erc721")
     ) {
       throw new Error("Invalid parameters");
     }
 
-    // mint erc1155
-    const txCalldata = await mint1155Creator(
+    const txCalldata = await mint721or1155Creator(
       chain,
       collectionAddress,
       user_address,
       tokenStandard,
       tokenId
     );
+    console.log("txCalldata", txCalldata);
     return transaction(txCalldata);
   } catch (e) {
     console.error("mint error", e);

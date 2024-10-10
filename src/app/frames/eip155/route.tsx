@@ -6,13 +6,17 @@ import { appURL } from "@/lib/frames";
 import { formatUnits, isAddress } from "viem";
 import FrameNft from "@/app/components/FrameNft";
 import { getChainName, isSupportedChainId } from "@/lib/utils";
-import { getCoinbase721NftCost } from "@/lib/coinbase-mint";
+import {
+  getCoinbase1155NftCost,
+  getCoinbase721NftCost,
+} from "@/lib/coinbase-mint";
 
 const handler = frames(async (ctx) => {
   const searchParams = new URLSearchParams(ctx.url.searchParams);
   const chainId = searchParams.get("chainId") || "";
   const collectionAddress = searchParams.get("collection") || "";
   const nftType = searchParams.get("nftType") || "";
+  const tokenId = searchParams.get("tokenId") || "";
   let nftImage: string = "";
   let nftName: string = "";
 
@@ -22,7 +26,8 @@ const handler = frames(async (ctx) => {
       !collectionAddress ||
       !isAddress(collectionAddress) ||
       (chainId && !isSupportedChainId(chainId)) ||
-      !nftType
+      !nftType ||
+      (nftType === "erc1155" && !tokenId)
     ) {
       throw new Error("Invalid parameters");
     }
@@ -61,8 +66,16 @@ const handler = frames(async (ctx) => {
       );
     }
 
-    // retrieve nft price
-    const nftPrice = await getCoinbase721NftCost(chainId, collectionAddress);
+    let nftPrice;
+    if (tokenStandard === "erc1155") {
+      nftPrice = await getCoinbase1155NftCost(
+        chainId,
+        collectionAddress,
+        BigInt(tokenId)
+      );
+    } else {
+      nftPrice = await getCoinbase721NftCost(chainId, collectionAddress);
+    }
 
     const formattedNftPrice: string = parseFloat(
       formatUnits(nftPrice, 18)
@@ -80,7 +93,7 @@ const handler = frames(async (ctx) => {
         <Button
           action="tx"
           key="1"
-          target={`/eip55/execute?chainId=${chainId}&collection=${collectionAddress}&nftType=${nftType}`}
+          target={`/eip155/execute?chainId=${chainId}&collection=${collectionAddress}&nftType=${nftType}&tokenId=${tokenId}`}
           post_url={`/result?chain=${getChainName(
             chainId
           )}&imageUrl=${nftImage}`}

@@ -21,7 +21,7 @@ export async function generateMetadata({
     other: {
       ...(await fetchMetadata(
         new URL(
-          `${FRAMES_BASE_PATH}/eip55?chainId=${params.chainId}&nftType=${params.nftType}&collection=${params.collectionAddress}`,
+          `${FRAMES_BASE_PATH}/eip155?chainId=${params.chainId}&nftType=${params.nftType}&collection=${params.collectionAddress}&tokenId=${params.tokenId}`,
           appURL()
         )
       )),

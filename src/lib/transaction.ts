@@ -26,7 +26,7 @@ export async function getNftPrice(
   return costs;
 }
 
-export async function mint1155Creator(
+export async function mint721or1155Creator(
   chain: string,
   collectionAddress: string,
   fromAddress: string,
